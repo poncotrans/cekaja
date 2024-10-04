@@ -7,37 +7,40 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-image: url('https://images.unsplash.com/photo-1542831371-80b13b6197d3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDF8fGdlYW1lciUyMHN0YW5kfGVufDB8fHx8MTYxOTc4Nzc1NQ&ixlib=rb-1.2.1&q=80&w=1080');
-            background-size: cover;
-            color: #fff;
+            background-color: #1a1a1a;
+            color: #f2f2f2;
             text-align: center;
             padding: 20px;
         }
         h1 {
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            color: #00ffcc;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            font-size: 2.5em;
+            margin-bottom: 20px;
         }
         input[type="number"] {
             padding: 10px;
             margin-top: 10px;
-            border: 2px solid #0ff;
+            border: 2px solid #00ffcc;
             border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: #2a2a2a;
             color: #fff;
-            width: 200px;
+            width: 250px;
             font-size: 16px;
         }
         button {
-            padding: 10px 15px;
-            background-color: #0ff;
+            padding: 10px 20px;
+            background-color: #00ffcc;
             border: none;
             cursor: pointer;
             font-size: 16px;
             margin-top: 10px;
             border-radius: 5px;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.2s;
         }
         button:hover {
-            background-color: #00ccff;
+            background-color: #00cc99;
+            transform: scale(1.05);
         }
         #result {
             display: none;
@@ -46,6 +49,7 @@
             margin: 20px auto;
             border-radius: 5px;
             width: 300px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
         }
         .overlay {
             position: fixed;
@@ -59,12 +63,12 @@
             align-items: center;
         }
         .result-content {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: #333;
             padding: 20px;
             border-radius: 10px;
             color: #fff;
             text-align: left;
-            box-shadow: 0 0 10px #0ff;
+            box-shadow: 0 0 10px #00ffcc;
         }
         .close {
             cursor: pointer;
