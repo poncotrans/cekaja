@@ -1,135 +1,97 @@
 <?php
-// Inisialisasi variabel untuk menyimpan hasil
-$result = '';
-$error = '';
-
-// Periksa jika form telah disubmit
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id = htmlspecialchars($_POST['id']); // Ambil ID dari input form
+    $id = htmlspecialchars($_POST['id']);
+    $api_url = "https://api.rasamsetiawan1.workers.dev/nickname/ff?id=" . $id;
 
-    // Validasi ID
-    if (!empty($id) && is_numeric($id)) {
-        // URL API
-        $url = "https://api.rasamsetiawan1.workers.dev/nickname/ff?id=" . $id;
-
-        // Inisialisasi cURL
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-        // Eksekusi cURL dan ambil respons
-        $response = curl_exec($ch);
-
-        // Periksa apakah terjadi kesalahan
-        if (curl_errno($ch)) {
-            $error = 'cURL Error: ' . curl_error($ch);
-        } else {
-            // Decode respons JSON
-            $result = json_decode($response, true);
-        }
-
-        // Tutup cURL
-        curl_close($ch);
-    } else {
-        $error = 'ID tidak valid. Harap masukkan angka.';
-    }
+    // Mengambil data dari API
+    $response = file_get_contents($api_url);
+    $data = json_decode($response, true);
 }
 ?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nickname Finder</title>
+    <title>Cari Nickname Free Fire</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #1a1a1a; /* Warna latar belakang gelap */
-            color: #fff; /* Warna teks putih */
-            margin: 0;
+            background-color: #1a1a1a;
+            color: #fff;
+            text-align: center;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
+        }
+        input[type="number"] {
+            padding: 10px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #0ff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #result {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 5px;
+            width: 300px;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
             align-items: center;
         }
-
-        h1 {
-            color: #0ff; /* Warna biru cerah */
-            text-shadow: 0 0 10px #00f;
-        }
-
-        form {
-            background-color: #222; /* Warna latar belakang form */
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-            margin-bottom: 20px;
-        }
-
-        label {
-            font-size: 18px;
-        }
-
-        input[type="number"] {
-            width: 200px;
-            padding: 10px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 5px;
-            outline: none;
-        }
-
-        button {
-            background-color: #0ff; /* Warna tombol biru cerah */
-            color: #222; /* Warna teks tombol */
-            border: none;
-            border-radius: 5px;
-            padding: 10px 15px;
+        .close {
             cursor: pointer;
-            margin-top: 10px;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #00e6e6; /* Warna saat hover */
-        }
-
-        h2 {
-            margin-top: 20px;
-            color: #0ff; /* Warna biru cerah untuk hasil */
-            text-shadow: 0 0 10px #00f;
-        }
-
-        pre {
-            background-color: #333; /* Warna latar belakang hasil */
-            border-radius: 5px;
-            padding: 10px;
-            overflow: auto;
-            color: #0f0; /* Warna teks hasil */
-        }
-
-        p {
-            color: red; /* Warna teks kesalahan */
+            color: red;
         }
     </style>
 </head>
 <body>
-    <h1>Cari Nickname Free Fire</h1>
-    <form method="post" action="">
-        <label for="id">Masukkan ID:</label>
-        <input type="number" id="id" name="id" required>
-        <button type="submit">Cari</button>
-    </form>
 
-    <?php if ($error): ?>
-        <p><?php echo $error; ?></p>
-    <?php endif; ?>
+<h1>Cari Nickname Free Fire</h1>
+<form method="POST" action="">
+    <input type="number" name="id" required placeholder="Masukkan ID">
+    <button type="submit">Cari</button>
+</form>
 
-    <?php if ($result): ?>
+<div id="result" class="overlay">
+    <div class="result-content">
+        <span class="close" onclick="document.getElementById('result').style.display='none';">&times; Tutup</span>
         <h2>Hasil:</h2>
-        <pre><?php print_r($result); ?></pre>
-    <?php endif; ?>
+        <div id="data">
+            <?php
+            if (isset($data) && $data['success']) {
+                echo "Name: " . htmlspecialchars($data['name']) . "<br>";
+                echo "Id: " . htmlspecialchars($data['id']) . "<br>";
+                echo "Game: " . htmlspecialchars($data['game']);
+            } elseif (isset($data)) {
+                echo "Data tidak ditemukan.";
+            }
+            ?>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        const resultDiv = document.getElementById('result');
+        const dataDiv = document.getElementById('data');
+        if (dataDiv.innerHTML.trim() !== '') {
+            resultDiv.style.display = 'flex';
+        }
+    };
+</script>
 </body>
 </html>
