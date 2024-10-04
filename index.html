@@ -1,13 +1,3 @@
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id = htmlspecialchars($_POST['id']);
-    $api_url = "https://api.rasamsetiawan1.workers.dev/nickname/ff?id=" . $id;
-
-    // Mengambil data dari API
-    $response = file_get_contents($api_url);
-    $data = json_decode($response, true);
-}
-?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -25,6 +15,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         input[type="number"] {
             padding: 10px;
             margin-top: 10px;
+            border: 1px solid #0ff;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
         }
         button {
             padding: 10px 15px;
@@ -32,6 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             border: none;
             cursor: pointer;
             font-size: 16px;
+            margin-top: 10px;
+            border-radius: 5px;
         }
         #result {
             display: none;
@@ -55,43 +51,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .close {
             cursor: pointer;
             color: red;
+            float: right;
+            font-size: 20px;
         }
     </style>
 </head>
 <body>
 
 <h1>Cari Nickname Free Fire</h1>
-<form method="POST" action="">
-    <input type="number" name="id" required placeholder="Masukkan ID">
-    <button type="submit">Cari</button>
-</form>
+<input type="number" id="id" required placeholder="Masukkan ID" />
+<button id="searchBtn">Cari</button>
 
 <div id="result" class="overlay">
     <div class="result-content">
         <span class="close" onclick="document.getElementById('result').style.display='none';">&times; Tutup</span>
         <h2>Hasil:</h2>
-        <div id="data">
-            <?php
-            if (isset($data) && $data['success']) {
-                echo "Name: " . htmlspecialchars($data['name']) . "<br>";
-                echo "Id: " . htmlspecialchars($data['id']) . "<br>";
-                echo "Game: " . htmlspecialchars($data['game']);
-            } elseif (isset($data)) {
-                echo "Data tidak ditemukan.";
-            }
-            ?>
-        </div>
+        <div id="data"></div>
     </div>
 </div>
 
 <script>
-    window.onload = function() {
-        const resultDiv = document.getElementById('result');
-        const dataDiv = document.getElementById('data');
-        if (dataDiv.innerHTML.trim() !== '') {
-            resultDiv.style.display = 'flex';
-        }
-    };
+    document.getElementById('searchBtn').addEventListener('click', function() {
+        const id = document.getElementById('id').value;
+        const apiUrl = `https://api.rasamsetiawan1.workers.dev/nickname/ff?id=${id}`;
+        
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const dataDiv = document.getElementById('data');
+                if (data.success) {
+                    dataDiv.innerHTML = `Name: ${data.name}<br>Id: ${data.id}<br>Game: ${data.game}`;
+                } else {
+                    dataDiv.innerHTML = 'Data tidak ditemukan.';
+                }
+                document.getElementById('result').style.display = 'flex';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('data').innerHTML = 'Terjadi kesalahan.';
+                document.getElementById('result').style.display = 'flex';
+            });
+    });
 </script>
 </body>
 </html>
